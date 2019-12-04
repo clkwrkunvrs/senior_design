@@ -273,48 +273,42 @@ class vnaStuff():
             stepsPerRev = 200
             desiredSteps = stepsPerRev/4
             #pin numbers to write
-            s1 = 1
-            s2 = 2
-            s3 = 3
-            s4 = 4
-            board.digital[s2].write(0)
-            board.digital[s3].write(0)
+            pins = [8,9,10,11]
+            i = 0
+            while i < len(pins):
+                board.digital[i].write(0)
             #take 50 steps
             for x in range(desiredSteps)):
-              board.digital[s1].write(1)
-              board.digital[s4].write(1)
-              time.sleep(0.001)
-              board.digital[s1].write(0)
-              board.digital[s4].write(0)
+              board.digital[pins[0]].write(1)
+              time.sleep(0.005)
+              board.digital[pins[0]].write(0)
+              time.sleep(0.005)
             triggerPulled = True
         return triggerPulled 
 
     def releaseTrigger():
         board = Arduino("COM3")
+        #full revolution is 200 steps
         stepsPerRev = 200
         desiredSteps = stepsPerRev/4
         #pin numbers to write
-        s1 = 1
-        s2 = 2
-        s3 = 3
-        s4 = 4
-        board.digital[s1].write(0)
-        board.digital[s4].write(0)
+        pins = [8,9,10,11]
+        i = 0
+        while i < len(pins):
+            board.digital[i].write(0)
         #take 50 steps
-        for x in range(desiredSteps):
-          board.digital[s2].write(1)
-          board.digital[s3].write(1)
-          time.sleep(0.001)
-          board.digital[s2].write(0)
-          board.digital[s3].write(0)
-        return true
+        for x in range(desiredSteps)):
+          board.digital[pins[2]].write(1)
+          time.sleep(0.005)
+          board.digital[pins[2]].write(0)
+          time.sleep(0.005)
         
 """"--------------------------------------------------------------------------------------------------------------------
 main
 ---------------------------------------------------------------------------------------------------------------------"""
 if __name__ == '__main__':
-    vnakit.init()
-    vnastuff vnas
+    vnakit.Init()
+    vnaStuff vnas
     '''
     settings in freq range (mhz),
     rbw (khz),
@@ -329,13 +323,14 @@ if __name__ == '__main__':
         3,
         vnakit.vnakit_mode_two_ports
     )
-    vnakit.applysettings(settings)
+    vnakit.ApplySettings(settings)
     #may need to move where this plot displays to avoid collision with the radar position plot 
     fig1 = plt.figure()
     sleep(0.001)
     vnas.ax1 = fig1.add_subplot(1, 1, 1)
     #does this work?
     backg = backg2 = backg3 = vnas.calcbackground()
-    #animatetime calls getposition and plotposition
-    vnas.an = ani.funcanimation(fig1, vnas.animatetime, fargs=(backg, backg2, backg3), interval=50)
+    #animateTime calls getposition and plotposition
+    vnas.an = ani.funcAnimation(fig1, vnas.animateTime, fargs=(backg, backg2, backg3), interval=50)
     plt.show()
+
