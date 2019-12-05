@@ -10,10 +10,13 @@ import cmath
 import math
 import math
 import random
+import serial
 '''
 Calcs the average background freq domain response
 '''
 
+ser = serial.Serial('COM3', 9600, timeout=0)
+timeout(2)
 class vnaStuff():
     def constructor(self):
         self.an = null
@@ -23,6 +26,7 @@ class vnaStuff():
         #THESE ARE AZIMUTH PARAMETERS FOR THE LAUNCHER. ADJUST THEM ACCORDINGLY
         self.left_theta_boundary = 0
         self.right_theta_boundary = 0
+#        time.sleep(2)
     def calcBackground():
         N = 10
         bg,bg2,bg3,bg_final,bg_final2,bgfinal3 = []
@@ -213,8 +217,7 @@ class vnaStuff():
         #plot position
         plotPosition(self.az_calc,self.range_calc)
         #pull launcher trigger if in boresite
-        #if(pullTrigger()):
-        #    releaseTrigger()
+        pullTrigger()
         return result
     
     def plotPosition(currentTheta=0, currentR=0):
@@ -266,43 +269,11 @@ class vnaStuff():
             plt.pause(0.05)
 
     def pullTrigger():
-        triggerPulled = False
-        if((self.az_calc > self.left_theta_boundary) and (self.az_calc < self.right_theta_boundary)):
-            board = Arduino("COM3")
-            #full revolution is 200 steps
-            stepsPerRev = 200
-            desiredSteps = stepsPerRev/4
-            #pin numbers to write
-            pins = [8,9,10,11]
-            i = 0
-            while i < len(pins):
-                board.digital[i].write(0)
-            #take 50 steps
-            for x in range(desiredSteps)):
-              board.digital[pins[0]].write(1)
-              time.sleep(0.005)
-              board.digital[pins[0]].write(0)
-              time.sleep(0.005)
-            triggerPulled = True
-        return triggerPulled 
+       ser.write(b'1')
+       time.sleep(2)
+       while(self.ser.readline() != b'done\r\n'):
+        print("waiting for launcher to reset")
 
-    def releaseTrigger():
-        board = Arduino("COM3")
-        #full revolution is 200 steps
-        stepsPerRev = 200
-        desiredSteps = stepsPerRev/4
-        #pin numbers to write
-        pins = [8,9,10,11]
-        i = 0
-        while i < len(pins):
-            board.digital[i].write(0)
-        #take 50 steps
-        for x in range(desiredSteps)):
-          board.digital[pins[2]].write(1)
-          time.sleep(0.005)
-          board.digital[pins[2]].write(0)
-          time.sleep(0.005)
-        
 """"--------------------------------------------------------------------------------------------------------------------
 main
 ---------------------------------------------------------------------------------------------------------------------"""
