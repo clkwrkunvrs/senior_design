@@ -18,8 +18,7 @@ class vnaStuff():
         self.range_calc = 0
         # THESE ARE AZIMUTH PARAMETERS FOR THE LAUNCHER. ADJUST THEM ACCORDINGLY
         self.az_calc = 0
-        self.left_theta_boundary = 0
-        self.right_theta_boundary = 0
+        self.theta_boundary = 10
 
     @staticmethod
     def generateEllipse(dist, separation):
@@ -378,24 +377,11 @@ class vnaStuff():
 
     def pullTrigger(self):
         triggerPulled = False
-        if ((self.az_calc > self.left_theta_boundary) and (self.az_calc < self.right_theta_boundary)):
-            board = Arduino("COM3")
-            # full revolution is 200 steps
-            stepsPerRev = 200
-            desiredSteps = stepsPerRev / 4
-            # pin numbers to write
-            pins = [8, 9, 10, 11]
-            i = 0
-            while i < len(pins):
-                board.digital[i].write(0)
-            # take 50 steps
-            for x in range(desiredSteps):
-                board.digital[pins[0]].write(1)
-            time.sleep(0.005)
-            board.digital[pins[0]].write(0)
-            time.sleep(0.005)
-            triggerPulled = True
-        return triggerPulled
+        if (abs(self.az_calc) < self.theta_boundary):
+           ser.write(b'1')
+           time.sleep(2)
+           while(self.ser.readline() != b'done\r\n'):
+            print("waiting for launcher to reset")
 
 """"--------------------------------------------------------------------------------------------------------------------
 main
